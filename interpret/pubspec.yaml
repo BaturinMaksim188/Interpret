@@ -10,15 +10,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  file_picker: ^4.0.0
-  # permission_handler: ^9.2.0
-
+  http: ^0.13.4
   cupertino_icons: ^1.0.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  http: ^0.13.4
   flutter_lints: ^3.0.0
 
 flutter:

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "91631873352",
+    "project_id": "interpret-14a87",
+    "storage_bucket": "interpret-14a87.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:91631873352:android:91c7147738bee1d8cdd77d",
+        "android_client_info": {
+          "package_name": "com.interpret.interpret"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_m1-xf8AclaMznrW9SDoiAgVoCgqmTIE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
