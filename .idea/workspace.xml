@@ -4,10 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="054b82fd-3743-4b37-bcb3-b25bf0e531c9" name="Changes" comment="">
+    <list default="true" id="054b82fd-3743-4b37-bcb3-b25bf0e531c9" name="Changes" comment="Complete change in user flow. Creating a framework for registration.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interpret/android/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/android/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interpret/lib/auth.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/auth.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interpret/lib/confirmation_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/confirmation_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interpret/lib/home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/home_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interpret/lib/login_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/login_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interpret/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interpret/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interpret/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/pubspec.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interpret/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/pubspec.yaml" afterDir="false" />
     </list>
@@ -58,6 +62,19 @@
       <option name="presentableId" value="Default" />
       <updated>1709545055586</updated>
     </task>
+    <task id="LOCAL-00001" summary="Complete change in user flow. Creating a framework for registration.">
+      <option name="closed" value="true" />
+      <created>1715607764207</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1715607764207</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Complete change in user flow. Creating a framework for registration." />
+    <option name="LAST_COMMIT_MESSAGE" value="Complete change in user flow. Creating a framework for registration." />
   </component>
 </project>

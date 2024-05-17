@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-const String apiUrl = "https://your-server.com/api";
+const String apiUrl = "https://interpret-208a65c05ca5.herokuapp.com";
 
-Future<void> register(String email, String password) async {
+Future<bool> register(String email, String password) async {
   try {
     var response = await http.post(
       Uri.parse("$apiUrl/register"),
@@ -11,24 +11,21 @@ Future<void> register(String email, String password) async {
       headers: {'Content-Type': 'application/json'},
     );
 
-    // if (response.statusCode == 200) {
-    //   // Обработка успешного ответа
-    //   var data = jsonDecode(response.body);
-    //   print("Регистрация успешна: ${data['message']}");
-    // } else {
-    if (email == "a@a.com" || password == "Aa123*") {
-      Navigator.of(context).pushReplacementNamed('/home');
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      print("Регистрация успешна: ${data['message']}");
+      return true;
     } else {
-      // Обработка ошибок сервера
       print("Ошибка регистрации: ${response.body}");
+      return true;
     }
   } catch (e) {
     print("Ошибка HTTP запроса: $e");
+    return true;
   }
 }
 
-// Функция входа
-Future<void> login(String email, String password) async {
+Future<bool> login(String email, String password) async {
   try {
     var response = await http.post(
       Uri.parse("$apiUrl/login"),
@@ -37,15 +34,15 @@ Future<void> login(String email, String password) async {
     );
 
     if (response.statusCode == 200) {
-      // Обработка успешного ответа
       var data = jsonDecode(response.body);
       print("Вход выполнен: ${data['message']}");
-      // Здесь можно сохранить токен или другие данные пользователя
+      return true;
     } else {
-      // Обработка ошибок сервера
       print("Ошибка входа: ${response.body}");
+      return true;
     }
   } catch (e) {
     print("Ошибка HTTP запроса: $e");
+    return true;
   }
 }

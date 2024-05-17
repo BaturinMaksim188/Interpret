@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'auth.dart'; // Убедитесь, что путь к файлу верный
+import 'auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -30,7 +31,14 @@ class _LoginPageState extends State<LoginPage> {
     final confirmPassword = _confirmPasswordController.text;
 
     if (isLogin) {
-      login(email, password); // Предполагается, что это функция, например, отправка запроса к API
+      login(email, password).then((success) {
+        if (success) {
+          _saveLoginStatus();
+          Navigator.of(context).pushReplacementNamed('/home');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ошибка входа")));
+        }
+      });
     } else {
       if (password != confirmPassword) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -39,10 +47,19 @@ class _LoginPageState extends State<LoginPage> {
         ));
         return;
       }
-      register(email, password).then((_) {
-        Navigator.of(context).pushReplacementNamed('/confirm'); // Переход на страницу подтверждения
+      register(email, password).then((success) {
+        if (success) {
+          Navigator.of(context).pushReplacementNamed('/confirm');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ошибка регистрации")));
+        }
       });
     }
+  }
+
+  Future<void> _saveLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLoggedIn', true);
   }
 
   @override
@@ -50,6 +67,12 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(isLogin ? 'Вход' : 'Регистрация'),
+        leading: isLogin ? null : IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            _toggleForm();
+          },
+        ),
         actions: [
           TextButton(
             onPressed: _toggleForm,
@@ -87,23 +110,23 @@ class _LoginPageState extends State<LoginPage> {
                   obscureText: _obscurePassword,
                   validator: (value) => value!.isEmpty || value.length < 6 ? 'Пароль должен быть длиннее 6 символов' : null,
                 ),
-
-                if (!isLogin) TextFormField(
-                  controller: _confirmPasswordController,
-                  decoration: InputDecoration(
-                    labelText: 'Повторите пароль',
-                    suffixIcon: IconButton(
-                      icon: Icon(_obscureConfirmPassword ? Icons.visibility_off : Icons.visibility),
-                      onPressed: () {
-                        setState(() {
-                          _obscureConfirmPassword = !_obscureConfirmPassword;
-                        });
-                      },
+                if (!isLogin)
+                  TextFormField(
+                    controller: _confirmPasswordController,
+                    decoration: InputDecoration(
+                      labelText: 'Повторите пароль',
+                      suffixIcon: IconButton(
+                        icon: Icon(_obscureConfirmPassword ? Icons.visibility_off : Icons.visibility),
+                        onPressed: () {
+                          setState(() {
+                            _obscureConfirmPassword = !_obscureConfirmPassword;
+                          });
+                        },
+                      ),
                     ),
+                    obscureText: _obscureConfirmPassword,
+                    validator: (value) => value != _passwordController.text ? 'Пароли не совпадают' : null,
                   ),
-                  obscureText: _obscureConfirmPassword,
-                  validator: (value) => value != _passwordController.text ? 'Пароли не совпадают' : null,
-                ),
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _submit,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfirmationPage extends StatefulWidget {
   @override
@@ -6,17 +7,17 @@ class ConfirmationPage extends StatefulWidget {
 }
 
 class _ConfirmationPageState extends State<ConfirmationPage> {
-  final _formKey = GlobalKey<FormState>(); // Ключ для управления формой
-  final _codeController = TextEditingController(); // Контроллер для текстового поля кода
-  int _start = 60; // Начальное значение таймера
+  final _formKey = GlobalKey<FormState>();
+  final _codeController = TextEditingController();
+  int _start = 60;
 
   void startTimer() {
-    const oneSec = const Duration(seconds: 1);
-    setState(() {
-      if (_start > 0) {
+    const oneSec = Duration(seconds: 1);
+    if (_start > 0) {
+      setState(() {
         _start--;
-      }
-    });
+      });
+    }
   }
 
   @override
@@ -28,15 +29,19 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
   void validateAndSubmit() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      // Здесь можно добавить логику отправки кода на сервер или его проверки
       print("Введённый код: ${_codeController.text}");
-      // Предположим, код должен быть "1234"
       if (_codeController.text == "1234") {
-        Navigator.of(context).pushReplacementNamed('/home'); // Переход на домашнюю страницу
+        _saveLoginStatus();
+        Navigator.of(context).pushReplacementNamed('/home');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Неверный код')));
       }
     }
+  }
+
+  Future<void> _saveLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLoggedIn', true);
   }
 
   @override
@@ -44,6 +49,12 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Подтверждение кода'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       body: Center(
         child: Padding(
@@ -71,7 +82,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _start == 60 ? () {
-                    startTimer(); /* отправить код повторно */
+                    startTimer();
                   } : null,
                   child: Text(_start == 60 ? 'Отправить код повторно' : 'Повторная отправка через $_start сек.'),
                 ),
