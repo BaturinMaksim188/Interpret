@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Название Приложения',
+      title: 'Interpret',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -21,7 +21,6 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => CheckAuth(),
         '/login': (context) => LoginPage(),
-        '/confirm': (context) => ConfirmationPage(),
         '/home': (context) => HomePage(),
       },
     );

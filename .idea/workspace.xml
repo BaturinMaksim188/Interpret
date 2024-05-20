@@ -8,10 +8,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interpret/lib/auth.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/auth.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interpret/lib/confirmation_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/confirmation_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interpret/lib/home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/home_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interpret/lib/login_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/login_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interpret/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interpret/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interpret/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/pubspec.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interpret/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/pubspec.yaml" afterDir="false" />
     </list>
@@ -38,14 +36,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "main"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

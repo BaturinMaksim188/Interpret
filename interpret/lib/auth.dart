@@ -21,7 +21,7 @@ Future<bool> register(String email, String password) async {
     }
   } catch (e) {
     print("Ошибка HTTP запроса: $e");
-    return true;
+    return false;
   }
 }
 

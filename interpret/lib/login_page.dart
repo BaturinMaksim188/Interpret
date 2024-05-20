@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'confirmation_page.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -26,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
     final isValid = _formKey.currentState!.validate();
     if (!isValid) return;
 
-    final email = _emailController.text;
+    final email = _emailController.text.toLowerCase();
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
 
@@ -49,7 +50,12 @@ class _LoginPageState extends State<LoginPage> {
       }
       register(email, password).then((success) {
         if (success) {
-          Navigator.of(context).pushReplacementNamed('/confirm');
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ConfirmationPage(email: email),
+            ),
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ошибка регистрации")));
         }
