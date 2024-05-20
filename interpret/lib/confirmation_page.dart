@@ -28,6 +28,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
   }
 
   void startTimer() {
+    _timer?.cancel();
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_start == 0) {
         timer.cancel();
@@ -51,24 +52,63 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
       _formKey.currentState!.save();
       print("Введённый код: ${_codeController.text}");
 
+      try {
+        final response = await http.post(
+          Uri.parse('$apiUrl/check_code'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, String>{
+            'email': widget.email,
+            'check_code': _codeController.text,
+          }),
+        );
+
+        if (response.statusCode == 200) {
+          _saveLoginStatus();
+          Navigator.of(context).pushReplacementNamed('/home');
+        } else {
+          final responseJson = jsonDecode(utf8.decode(response.bodyBytes));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(responseJson['message'].toString())));
+        }
+      } catch (e) {
+        print('Error occurred: $e');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Ошибка сети, попробуйте позже')));
+      }
+    }
+  }
+
+  Future<void> remakeCode() async {
+    if (widget.email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Email не должен быть пустым')));
+      return;
+    }
+
+    try {
       final response = await http.post(
-        Uri.parse('$apiUrl/check_code'),
+        Uri.parse('$apiUrl/remake_code'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, String>{
           'email': widget.email,
-          'check_code': _codeController.text,
         }),
       );
 
       if (response.statusCode == 200) {
-        _saveLoginStatus();
-        Navigator.of(context).pushReplacementNamed('/home');
+        final responseJson = jsonDecode(utf8.decode(response.bodyBytes));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(responseJson['message'].toString())));
+        setState(() {
+          _start = 60;
+        });
+        startTimer();
       } else {
-        final responseJson = jsonDecode(response.body);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(responseJson['message'])));
+        final responseJson = jsonDecode(utf8.decode(response.bodyBytes));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(responseJson['message'].toString())));
       }
+    } catch (e) {
+      print('Error occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Ошибка сети, попробуйте позже')));
     }
   }
 
@@ -115,10 +155,7 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _start == 0 ? () {
-                    setState(() {
-                      _start = 60;
-                    });
-                    startTimer();
+                    remakeCode();
                   } : null,
                   child: Text(_start == 0 ? 'Отправить код повторно' : 'Повторная отправка через $_start сек.'),
                 ),
