@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
+import 'add_book_page.dart';  // Импортируйте созданный файл
 
 const String apiUrl = "https://interpret-208a65c05ca5.herokuapp.com";
 
@@ -83,12 +84,55 @@ class _HomePageState extends State<HomePage> {
     Navigator.of(context).pushReplacementNamed('/login');
   }
 
-  void _deleteBook(String bookTitle) {
+  Future<void> _deleteBook(String bookTitle) async {
     setState(() {
-      _books.remove(bookTitle);
-      _filteredBooks.remove(bookTitle);
+      _isLoading = true;
     });
-    // Здесь можно добавить запрос на сервер для удаления книги
+
+    try {
+      var response = await http.post(
+        Uri.parse("$apiUrl/delete_book"),
+        body: jsonEncode({
+          'email': widget.email,
+          'password': widget.password,
+          'title': bookTitle,
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _books.remove(bookTitle);
+          _filteredBooks.remove(bookTitle);
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Книга удалена!")));
+      } else {
+        var data = jsonDecode(utf8.decode(response.bodyBytes));
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(data['message'])));
+      }
+    } catch (e) {
+      setState(() {
+        _message = "Ошибка сети, попробуйте позже";
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ошибка сети, попробуйте позже")));
+    }
+  }
+
+  void _addBook() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddBookPage(email: widget.email, password: widget.password),
+      ),
+    );
+    if (result == true) {
+      _loadBooks();
+    }
   }
 
   @override
@@ -130,15 +174,16 @@ class _HomePageState extends State<HomePage> {
       )
           : _books.isEmpty
           ? Center(
-        child: GestureDetector(
-          onTap: () {
-            // Логика добавления первой книги
-            print("Добавление первой книги");
-          },
-          child: Text(
-            'Добавьте первую книгу',
-            style: TextStyle(color: Colors.blue),
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Добавьте первую книгу', style: TextStyle(color: Colors.blue)),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _addBook,
+              child: Text('Добавить книгу'),
+            ),
+          ],
         ),
       )
           : Column(
@@ -182,6 +227,12 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+      floatingActionButton: _books.isNotEmpty
+          ? FloatingActionButton(
+        onPressed: _addBook,
+        child: Icon(Icons.add),
+      )
+          : null,
     );
   }
 }
