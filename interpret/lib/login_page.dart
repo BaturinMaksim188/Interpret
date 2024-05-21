@@ -32,12 +32,12 @@ class _LoginPageState extends State<LoginPage> {
     final confirmPassword = _confirmPasswordController.text;
 
     if (isLogin) {
-      login(email, password).then((success) {
-        if (success) {
+      login(email, password).then((result) {
+        if (result['success']) {
           _saveLoginStatus();
           Navigator.of(context).pushReplacementNamed('/home');
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ошибка входа")));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result['message'])));
         }
       });
     } else {
@@ -48,8 +48,8 @@ class _LoginPageState extends State<LoginPage> {
         ));
         return;
       }
-      register(email, password).then((success) {
-        if (success) {
+      register(email, password).then((result) {
+        if (result['success']) {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ошибка регистрации")));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result['message'])));
         }
       });
     }
