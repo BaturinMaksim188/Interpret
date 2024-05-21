@@ -6,8 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="054b82fd-3743-4b37-bcb3-b25bf0e531c9" name="Changes" comment="Fully working authorization.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/interpret/lib/auth.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/auth.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interpret/lib/home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/home_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interpret/lib/login_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/login_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interpret/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/main.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,7 +89,15 @@
       <option name="project" value="LOCAL" />
       <updated>1716221332370</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Fully working authorization.">
+      <option name="closed" value="true" />
+      <created>1716290521242</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1716290521242</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">

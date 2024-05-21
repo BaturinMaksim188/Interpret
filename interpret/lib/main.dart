@@ -18,10 +18,23 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       initialRoute: '/',
-      routes: {
-        '/': (context) => CheckAuth(),
-        '/login': (context) => LoginPage(),
-        '/home': (context) => HomePage(),
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/':
+            return MaterialPageRoute(builder: (context) => CheckAuth());
+          case '/login':
+            return MaterialPageRoute(builder: (context) => LoginPage());
+          case '/home':
+            final args = settings.arguments as Map<String, String>;
+            return MaterialPageRoute(
+              builder: (context) => HomePage(
+                email: args['email']!,
+                password: args['password']!,
+              ),
+            );
+          default:
+            return MaterialPageRoute(builder: (context) => LoginPage());
+        }
       },
     );
   }
@@ -36,7 +49,21 @@ class CheckAuth extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         } else if (snapshot.hasData && snapshot.data == true) {
-          return HomePage();
+          return FutureBuilder<Map<String, String>>(
+            future: getUserCredentials(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              } else if (snapshot.hasData) {
+                return HomePage(
+                  email: snapshot.data!['email']!,
+                  password: snapshot.data!['password']!,
+                );
+              } else {
+                return LoginPage();
+              }
+            },
+          );
         } else {
           return LoginPage();
         }
@@ -47,5 +74,12 @@ class CheckAuth extends StatelessWidget {
   Future<bool> checkLoginStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool('isLoggedIn') ?? false;
+  }
+
+  Future<Map<String, String>> getUserCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString('email') ?? '';
+    final password = prefs.getString('password') ?? '';
+    return {'email': email, 'password': password};
   }
 }

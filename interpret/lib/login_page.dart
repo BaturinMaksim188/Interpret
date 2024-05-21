@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'confirmation_page.dart';
+import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -34,8 +35,11 @@ class _LoginPageState extends State<LoginPage> {
     if (isLogin) {
       login(email, password).then((result) {
         if (result['success']) {
-          _saveLoginStatus();
-          Navigator.of(context).pushReplacementNamed('/home');
+          _saveLoginStatus(email, password);
+          Navigator.of(context).pushReplacementNamed('/home', arguments: {
+            'email': email,
+            'password': password,
+          });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result['message'])));
         }
@@ -63,9 +67,11 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<void> _saveLoginStatus() async {
+  Future<void> _saveLoginStatus(String email, String password) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('isLoggedIn', true);
+    prefs.setString('email', email);
+    prefs.setString('password', password);
   }
 
   @override
