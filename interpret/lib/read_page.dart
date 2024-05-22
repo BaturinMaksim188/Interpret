@@ -84,7 +84,7 @@ class _ReadPageState extends State<ReadPage> {
       if (response.statusCode == 200) {
         var data = jsonDecode(utf8.decode(response.bodyBytes));
         setState(() {
-          _bookPages = data['content'].split('\n\n'); // Предполагаем, что страницы разделены двумя новыми строками
+          _bookPages = paginateContent(data['content']);
           _currentPage = data['current_page'];
           _pageController = PageController(initialPage: _currentPage);
           _isLoading = false;
@@ -104,6 +104,11 @@ class _ReadPageState extends State<ReadPage> {
     }
   }
 
+  List<String> paginateContent(String content) {
+    // Разделение контента на страницы
+    return content.split('\n\n');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,15 +122,53 @@ class _ReadPageState extends State<ReadPage> {
           : PageView.builder(
         controller: _pageController,
         onPageChanged: (page) {
+          setState(() {
+            _currentPage = page;
+          });
           _saveCurrentPage(page);
         },
         itemCount: _bookPages.length,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text(_bookPages[index]),
+            child: SingleChildScrollView(
+              child: Text(_bookPages[index]),
+            ),
           );
         },
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Container(
+          height: 50.0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: _currentPage > 0
+                    ? () {
+                  _pageController.previousPage(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.ease,
+                  );
+                }
+                    : null,
+              ),
+              Text('Страница ${_currentPage + 1} из ${_bookPages.length}'),
+              IconButton(
+                icon: Icon(Icons.arrow_forward),
+                onPressed: _currentPage < _bookPages.length - 1
+                    ? () {
+                  _pageController.nextPage(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.ease,
+                  );
+                }
+                    : null,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
