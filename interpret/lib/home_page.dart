@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> {
         headers: {'Content-Type': 'application/json'},
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 500) {
         setState(() {
           _books.remove(bookTitle);
           _filteredBooks.remove(bookTitle);
