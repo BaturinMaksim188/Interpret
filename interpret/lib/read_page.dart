@@ -84,7 +84,7 @@ class _ReadPageState extends State<ReadPage> {
       if (response.statusCode == 200) {
         var data = jsonDecode(utf8.decode(response.bodyBytes));
         setState(() {
-          _bookPages = paginateContent(data['content']);
+          _bookPages = paginateContent(data['content'], 1000);  // Разбить текст на страницы по 1000 символов
           _currentPage = data['current_page'];
           _pageController = PageController(initialPage: _currentPage);
           _isLoading = false;
@@ -104,9 +104,20 @@ class _ReadPageState extends State<ReadPage> {
     }
   }
 
-  List<String> paginateContent(String content) {
-    // Разделение контента на страницы
-    return content.split('\n\n');
+  List<String> paginateContent(String content, int charsPerPage) {
+    List<String> pages = [];
+    int startIndex = 0;
+
+    while (startIndex < content.length) {
+      int endIndex = startIndex + charsPerPage;
+      if (endIndex > content.length) {
+        endIndex = content.length;
+      }
+      pages.add(content.substring(startIndex, endIndex));
+      startIndex = endIndex;
+    }
+
+    return pages;
   }
 
   @override
