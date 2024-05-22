@@ -67,6 +67,7 @@ class _ReadPageState extends State<ReadPage> {
   Future<void> _loadBookContent() async {
     setState(() {
       _isLoading = true;
+      _message = '';
     });
 
     try {
@@ -83,9 +84,9 @@ class _ReadPageState extends State<ReadPage> {
       if (response.statusCode == 200) {
         var data = jsonDecode(utf8.decode(response.bodyBytes));
         setState(() {
-          _bookPages = paginateContent(data['content'], 1000);  // 1000 символов на страницу
-          _currentPage = data['current_page'] ?? 0;
-          _pageController = PageController(initialPage: _currentPage);  // Инициализация контроллера с текущей страницы
+          _bookPages = data['content'].split('\n\n'); // Предполагаем, что страницы разделены двумя новыми строками
+          _currentPage = data['current_page'];
+          _pageController = PageController(initialPage: _currentPage);
           _isLoading = false;
         });
       } else {
@@ -103,22 +104,6 @@ class _ReadPageState extends State<ReadPage> {
     }
   }
 
-  List<String> paginateContent(String content, int charsPerPage) {
-    List<String> pages = [];
-    int startIndex = 0;
-
-    while (startIndex < content.length) {
-      int endIndex = startIndex + charsPerPage;
-      if (endIndex > content.length) {
-        endIndex = content.length;
-      }
-      pages.add(content.substring(startIndex, endIndex));
-      startIndex = endIndex;
-    }
-
-    return pages;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,34 +113,17 @@ class _ReadPageState extends State<ReadPage> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : _message.isNotEmpty
-          ? Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(_message),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _loadBookContent,
-              child: Text('Повторить'),
-            ),
-          ],
-        ),
-      )
+          ? Center(child: Text(_message))
           : PageView.builder(
         controller: _pageController,
-        onPageChanged: (int page) {
+        onPageChanged: (page) {
           _saveCurrentPage(page);
         },
         itemCount: _bookPages.length,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.all(16.0),
-            child: SingleChildScrollView(
-              child: Text(
-                _bookPages[index],
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
+            child: Text(_bookPages[index]),
           );
         },
       ),

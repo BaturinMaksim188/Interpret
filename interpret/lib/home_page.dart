@@ -161,59 +161,73 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Книги'),
+        title: Text('Домашняя страница'),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () => _logout(context),
+            icon: Icon(Icons.exit_to_app),
+            onPressed: () {
+              _logout(context);
+            },
           ),
         ],
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
-          : _message.isNotEmpty
+          : _books.isEmpty
           ? Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(_message),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _retryLoadBooks,
-              child: Text('Повторить'),
-            ),
+            Text('Добавьте первую книгу', style: TextStyle(color: Colors.blue)),
           ],
         ),
       )
-          : Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                labelText: 'Поиск книги',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.search),
+          : RefreshIndicator(
+        onRefresh: _loadBooks,
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  labelText: 'Поиск книги',
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _filteredBooks.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(_filteredBooks[index]),
-                  onTap: () => _readBook(_filteredBooks[index]),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () => _deleteBook(_filteredBooks[index]),
-                  ),
-                );
-              },
+            Expanded(
+              child: ListView.separated(
+                itemCount: _filteredBooks.length,
+                separatorBuilder: (context, index) => Divider(),
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(_filteredBooks[index]),
+                    onTap: () {
+                      _readBook(_filteredBooks[index]);
+                    },
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        _deleteBook(_filteredBooks[index]);
+                      },
+                    ),
+                    tileColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    leading: Icon(Icons.book, color: Colors.blue),
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addBook,
