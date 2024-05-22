@@ -43,6 +43,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _loadBooks() async {
     setState(() {
       _isLoading = true;
+      _message = '';
     });
 
     try {
@@ -146,7 +147,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Домашняя страница'),
-        automaticallyImplyLeading: false, // Отключение стрелки "назад"
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: Icon(Icons.exit_to_app),

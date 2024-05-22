@@ -43,19 +43,20 @@ class _AddBookPageState extends State<AddBookPage> {
   Future<void> _pickFile() async {
     PermissionStatus status = await Permission.storage.request();
     FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['fb2', 'pdf', 'txt'],
+      type: FileType.any,
     );
 
     if (result != null) {
-      String fileExtension = result.files.single.extension!;
-      if (!['fb2', 'pdf', 'txt'].contains(fileExtension.toLowerCase())) {
+      File file = File(result.files.single.path!);
+      String fileExtension = file.path.split('.').last.toLowerCase();
+
+      if (!['fb2', 'pdf', 'txt'].contains(fileExtension)) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Вы можете загружать только fb2, pdf или txt файлы.")));
         return;
       }
 
       setState(() {
-        _selectedFile = File(result.files.single.path!);
+        _selectedFile = file;
         String fileName = _selectedFile!.path.split('/').last;
         String bookTitle = fileName.split('.').first;
         _titleController.text = bookTitle;
@@ -64,19 +65,6 @@ class _AddBookPageState extends State<AddBookPage> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('selected_file', _selectedFile!.path);
     }
-    // if (status.isDenied) {
-    //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Разрешение на доступ к хранилищу отклонено.")));
-    // } else if (status.isPermanentlyDenied) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(
-    //       content: Text("Разрешение на доступ к хранилищу постоянно отклонено. Пожалуйста, измените это в настройках."),
-    //       action: SnackBarAction(
-    //         label: 'Настройки',
-    //         onPressed: openAppSettings,
-    //       ),
-    //     ),
-    //   );
-    // }
   }
 
   Future<void> _addBook() async {
