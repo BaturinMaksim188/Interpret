@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="054b82fd-3743-4b37-bcb3-b25bf0e531c9" name="Changes" comment="temp version - cannot delete non existing book, cannot parse pdf">
+    <list default="true" id="054b82fd-3743-4b37-bcb3-b25bf0e531c9" name="Changes" comment="temp version - cannot parse pdf and fb2">
       <change beforePath="$PROJECT_DIR$/interpret/lib/home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/home_page.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -145,7 +145,15 @@
       <option name="project" value="LOCAL" />
       <updated>1716350339374</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="temp version - cannot parse pdf and fb2">
+      <option name="closed" value="true" />
+      <created>1716350711975</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1716350711975</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -158,6 +166,7 @@
     <MESSAGE value="temp" />
     <MESSAGE value="temp version - cannot delete non existing book, cannot add fb2, cannot parse pdf" />
     <MESSAGE value="temp version - cannot delete non existing book, cannot parse pdf" />
-    <option name="LAST_COMMIT_MESSAGE" value="temp version - cannot delete non existing book, cannot parse pdf" />
+    <MESSAGE value="temp version - cannot parse pdf and fb2" />
+    <option name="LAST_COMMIT_MESSAGE" value="temp version - cannot parse pdf and fb2" />
   </component>
 </project>

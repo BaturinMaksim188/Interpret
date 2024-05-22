@@ -173,60 +173,63 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       )
-          : _books.isEmpty
-          ? Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          : RefreshIndicator(
+        onRefresh: _loadBooks,
+        child: _books.isEmpty
+            ? Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Добавьте первую книгу', style: TextStyle(color: Colors.blue)),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _addBook,
+                child: Text('Добавить книгу'),
+              ),
+            ],
+          ),
+        )
+            : Column(
           children: [
-            Text('Добавьте первую книгу', style: TextStyle(color: Colors.blue)),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _addBook,
-              child: Text('Добавить книгу'),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  labelText: 'Поиск',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+            Expanded(
+              child: ListView.separated(
+                itemCount: _filteredBooks.length,
+                separatorBuilder: (context, index) => Divider(),
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(_filteredBooks[index]),
+                    onTap: () {
+                      // Логика при клике на книгу
+                      print("Книга выбрана: ${_filteredBooks[index]}");
+                    },
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        _deleteBook(_filteredBooks[index]);
+                      },
+                    ),
+                    tileColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    leading: Icon(Icons.book, color: Colors.blue),
+                  );
+                },
+              ),
             ),
           ],
         ),
-      )
-          : Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                labelText: 'Поиск',
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.separated(
-              itemCount: _filteredBooks.length,
-              separatorBuilder: (context, index) => Divider(),
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(_filteredBooks[index]),
-                  onTap: () {
-                    // Логика при клике на книгу
-                    print("Книга выбрана: ${_filteredBooks[index]}");
-                  },
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () {
-                      _deleteBook(_filteredBooks[index]);
-                    },
-                  ),
-                  tileColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  leading: Icon(Icons.book, color: Colors.blue),
-                );
-              },
-            ),
-          ),
-        ],
       ),
       floatingActionButton: _books.isNotEmpty
           ? FloatingActionButton(
