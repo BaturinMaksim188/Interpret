@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="054b82fd-3743-4b37-bcb3-b25bf0e531c9" name="Changes" comment="temp version - cannot parse pdf and fb2">
+    <list default="true" id="054b82fd-3743-4b37-bcb3-b25bf0e531c9" name="Changes" comment="add RefreshIndicator">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interpret/lib/add_book_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/add_book_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interpret/lib/home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/home_page.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -153,7 +155,15 @@
       <option name="project" value="LOCAL" />
       <updated>1716350711975</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="add RefreshIndicator">
+      <option name="closed" value="true" />
+      <created>1716351323643</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1716351323643</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -167,6 +177,7 @@
     <MESSAGE value="temp version - cannot delete non existing book, cannot add fb2, cannot parse pdf" />
     <MESSAGE value="temp version - cannot delete non existing book, cannot parse pdf" />
     <MESSAGE value="temp version - cannot parse pdf and fb2" />
-    <option name="LAST_COMMIT_MESSAGE" value="temp version - cannot parse pdf and fb2" />
+    <MESSAGE value="add RefreshIndicator" />
+    <option name="LAST_COMMIT_MESSAGE" value="add RefreshIndicator" />
   </component>
 </project>

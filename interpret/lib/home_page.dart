@@ -101,17 +101,21 @@ class _HomePageState extends State<HomePage> {
         headers: {'Content-Type': 'application/json'},
       );
 
-      if (response.statusCode == 200 || response.statusCode == 500) {
+      if (response.statusCode == 200) {
         setState(() {
           _books.remove(bookTitle);
           _filteredBooks.remove(bookTitle);
           _isLoading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Книга удалена!")));
+        await _loadBooks();
       } else {
         var data = jsonDecode(utf8.decode(response.bodyBytes));
         setState(() {
+          _books.remove(bookTitle);
+          _filteredBooks.remove(bookTitle);
           _isLoading = false;
+          _loadBooks();
         });
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(data['message'])));
       }

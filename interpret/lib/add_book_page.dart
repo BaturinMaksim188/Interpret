@@ -90,7 +90,7 @@ class _AddBookPageState extends State<AddBookPage> {
         var request = http.MultipartRequest('POST', Uri.parse('$apiUrl/add_book'))
           ..fields['email'] = widget.email
           ..fields['password'] = widget.password
-          ..fields['title'] = _titleController.text
+          ..fields['title'] = _titleController.text.toLowerCase()
           ..fields['extension'] = fileExtension
           ..files.add(await http.MultipartFile.fromPath('content', file.path));
 
