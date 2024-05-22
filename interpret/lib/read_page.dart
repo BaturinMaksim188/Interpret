@@ -18,7 +18,7 @@ class ReadPage extends StatefulWidget {
 
 class _ReadPageState extends State<ReadPage> {
   int _currentPage = 0;
-  final PageController _pageController = PageController();
+  late PageController _pageController;
   List<String> _bookPages = [];
   bool _isLoading = true;
   String _message = '';
@@ -26,7 +26,7 @@ class _ReadPageState extends State<ReadPage> {
   @override
   void initState() {
     super.initState();
-    _loadLastPage();
+    _pageController = PageController();
     _loadBookContent();
   }
 
@@ -36,20 +36,32 @@ class _ReadPageState extends State<ReadPage> {
     super.dispose();
   }
 
-  Future<void> _loadLastPage() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int? lastPage = prefs.getInt('lastPage_${widget.bookTitle}');
-    if (lastPage != null) {
-      setState(() {
-        _currentPage = lastPage;
-      });
-      _pageController.jumpToPage(_currentPage);
-    }
-  }
-
   Future<void> _saveCurrentPage(int page) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt('lastPage_${widget.bookTitle}', page);
+
+    try {
+      var response = await http.post(
+        Uri.parse("$apiUrl/save_current_page"),
+        body: jsonEncode({
+          'email': widget.email,
+          'password': widget.password,
+          'title': widget.bookTitle,
+          'current_page': page,
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode != 200) {
+        setState(() {
+          _message = "Не удалось сохранить текущую страницу.";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _message = "Ошибка сети, попробуйте позже";
+      });
+    }
   }
 
   Future<void> _loadBookContent() async {
@@ -71,7 +83,9 @@ class _ReadPageState extends State<ReadPage> {
       if (response.statusCode == 200) {
         var data = jsonDecode(utf8.decode(response.bodyBytes));
         setState(() {
-          _bookPages = data['content'].split('\n\n');  // Разделим содержимое книги на страницы
+          _bookPages = paginateContent(data['content'], 1000);  // 1000 символов на страницу
+          _currentPage = data['current_page'] ?? 0;
+          _pageController = PageController(initialPage: _currentPage);  // Инициализация контроллера с текущей страницы
           _isLoading = false;
         });
       } else {
@@ -87,6 +101,22 @@ class _ReadPageState extends State<ReadPage> {
         _isLoading = false;
       });
     }
+  }
+
+  List<String> paginateContent(String content, int charsPerPage) {
+    List<String> pages = [];
+    int startIndex = 0;
+
+    while (startIndex < content.length) {
+      int endIndex = startIndex + charsPerPage;
+      if (endIndex > content.length) {
+        endIndex = content.length;
+      }
+      pages.add(content.substring(startIndex, endIndex));
+      startIndex = endIndex;
+    }
+
+    return pages;
   }
 
   @override
