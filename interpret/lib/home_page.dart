@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'add_book_page.dart';
+import 'read_page.dart';  // Импортируйте read_page
 
 const String apiUrl = "https://interpret-208a65c05ca5.herokuapp.com";
 
@@ -101,21 +102,18 @@ class _HomePageState extends State<HomePage> {
         headers: {'Content-Type': 'application/json'},
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 500) {
         setState(() {
           _books.remove(bookTitle);
           _filteredBooks.remove(bookTitle);
           _isLoading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Книга удалена!")));
-        await _loadBooks();
+        await _loadBooks();  // Обновляем список книг после удаления
       } else {
         var data = jsonDecode(utf8.decode(response.bodyBytes));
         setState(() {
-          _books.remove(bookTitle);
-          _filteredBooks.remove(bookTitle);
           _isLoading = false;
-          _loadBooks();
         });
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(data['message'])));
       }
@@ -138,6 +136,19 @@ class _HomePageState extends State<HomePage> {
     if (result == true) {
       _loadBooks();
     }
+  }
+
+  void _readBook(String bookTitle) async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReadPage(
+          bookTitle: bookTitle,
+          email: widget.email,
+          password: widget.password,
+        ),
+      ),
+    );
   }
 
   @override
@@ -196,12 +207,15 @@ class _HomePageState extends State<HomePage> {
             : Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(16.0),
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
-                  labelText: 'Поиск',
-                  border: OutlineInputBorder(),
+                  labelText: 'Поиск книги',
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
             ),
@@ -213,8 +227,7 @@ class _HomePageState extends State<HomePage> {
                   return ListTile(
                     title: Text(_filteredBooks[index]),
                     onTap: () {
-                      // Логика при клике на книгу
-                      print("Книга выбрана: ${_filteredBooks[index]}");
+                      _readBook(_filteredBooks[index]);
                     },
                     trailing: IconButton(
                       icon: Icon(Icons.delete),
@@ -235,12 +248,10 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      floatingActionButton: _books.isNotEmpty
-          ? FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: _addBook,
         child: Icon(Icons.add),
-      )
-          : null,
+      ),
     );
   }
 }
