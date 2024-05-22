@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="054b82fd-3743-4b37-bcb3-b25bf0e531c9" name="Changes" comment="temp">
+    <list default="true" id="054b82fd-3743-4b37-bcb3-b25bf0e531c9" name="Changes" comment="temp version - cannot delete non existing book, cannot add fb2, cannot parse pdf">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interpret/lib/add_book_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/add_book_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interpret/lib/home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/interpret/lib/home_page.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -122,7 +123,15 @@
       <option name="project" value="LOCAL" />
       <updated>1716309265967</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="temp version - cannot delete non existing book, cannot add fb2, cannot parse pdf">
+      <option name="closed" value="true" />
+      <created>1716323697384</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1716323697384</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -133,6 +142,7 @@
     <MESSAGE value="files preview" />
     <MESSAGE value="files addition incomplete" />
     <MESSAGE value="temp" />
-    <option name="LAST_COMMIT_MESSAGE" value="temp" />
+    <MESSAGE value="temp version - cannot delete non existing book, cannot add fb2, cannot parse pdf" />
+    <option name="LAST_COMMIT_MESSAGE" value="temp version - cannot delete non existing book, cannot add fb2, cannot parse pdf" />
   </component>
 </project>
