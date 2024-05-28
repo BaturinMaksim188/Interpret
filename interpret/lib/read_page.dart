@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -24,6 +25,7 @@ class _ReadPageState extends State<ReadPage> {
   String _message = '';
   TextEditingController _jumpPageController = TextEditingController();
   OverlayEntry? _overlayEntry;
+  String? _highlightedSentence;
 
   @override
   void initState() {
@@ -177,6 +179,10 @@ class _ReadPageState extends State<ReadPage> {
       _overlayEntry = null;
     }
 
+    setState(() {
+      _highlightedSentence = sentence;
+    });
+
     _overlayEntry = _createOverlayEntry(context, sentence, position);
     Overlay.of(context)?.insert(_overlayEntry!);
   }
@@ -187,6 +193,9 @@ class _ReadPageState extends State<ReadPage> {
         onTap: () {
           _overlayEntry?.remove();
           _overlayEntry = null;
+          setState(() {
+            _highlightedSentence = null;
+          });
         },
         child: Stack(
           children: [
@@ -211,7 +220,7 @@ class _ReadPageState extends State<ReadPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Перевод: test', // Здесь будет перевод предложения
+                        'Перевод: $sentence', // Отображение текста предложения
                         style: TextStyle(fontSize: 16),
                       ),
                       IconButton(
@@ -219,6 +228,9 @@ class _ReadPageState extends State<ReadPage> {
                         onPressed: () {
                           _overlayEntry?.remove();
                           _overlayEntry = null;
+                          setState(() {
+                            _highlightedSentence = null;
+                          });
                         },
                       ),
                     ],
@@ -230,6 +242,30 @@ class _ReadPageState extends State<ReadPage> {
         ),
       ),
     );
+  }
+
+  List<TextSpan> _buildTextSpans(String text) {
+    List<TextSpan> spans = [];
+    List<String> sentences = text.split('. ');
+
+    for (String sentence in sentences) {
+      spans.add(
+        TextSpan(
+          text: sentence + '. ',
+          style: TextStyle(
+            backgroundColor: _highlightedSentence == sentence ? Colors.yellow : Colors.transparent,
+          ),
+          recognizer: TapGestureRecognizer()
+            ..onTapUp = (details) {
+              RenderBox box = context.findRenderObject() as RenderBox;
+              Offset position = box.localToGlobal(details.globalPosition);
+              _showTranslationOverlay(context, sentence, position);
+            },
+        ),
+      );
+    }
+
+    return spans;
   }
 
   @override
@@ -257,12 +293,20 @@ class _ReadPageState extends State<ReadPage> {
               return GestureDetector(
                 onTapUp: (details) {
                   Offset position = details.globalPosition;
-                  _showTranslationOverlay(context, _bookPages[index], position);
+                  String tappedSentence = _getTappedSentence(details.localPosition, index);
+                  if (tappedSentence.isNotEmpty) {
+                    _showTranslationOverlay(context, tappedSentence, position);
+                  }
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: SingleChildScrollView(
-                    child: Text(_bookPages[index]),
+                    child: RichText(
+                      text: TextSpan(
+                        style: TextStyle(color: Colors.black),
+                        children: _buildTextSpans(_bookPages[index]),
+                      ),
+                    ),
                   ),
                 ),
               );
@@ -307,5 +351,18 @@ class _ReadPageState extends State<ReadPage> {
         ),
       ),
     );
+  }
+
+  String _getTappedSentence(Offset position, int pageIndex) {
+    String text = _bookPages[pageIndex];
+    List<String> sentences = text.split('. ');
+
+    for (String sentence in sentences) {
+      if (sentence.contains(position.toString())) {
+        return sentence;
+      }
+    }
+
+    return '';
   }
 }
