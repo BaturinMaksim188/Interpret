@@ -1,28 +1,72 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 const String apiUrl = "https://interpret-208a65c05ca5.herokuapp.com";
 
 class ProfilePage extends StatefulWidget {
   final String email;
-  final String password; // Добавьте password
+  final String password;
 
-  ProfilePage({required this.email, required this.password}); // Обновите конструктор
+  ProfilePage({required this.email, required this.password});
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String selectedLanguage = 'English';
+  String selectedLanguage = 'Russian';
   List<String> languages = ['English', 'Spanish', 'French', 'German'];
   List<String> filteredLanguages = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _loadSelectedLanguage();
     filteredLanguages = languages;
+  }
+
+  void _loadSelectedLanguage() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse('$apiUrl/get_translation_language'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': widget.email,
+          'password': widget.password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        setState(() {
+          selectedLanguage = responseBody['content'];
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Ошибка при загрузке языка перевода'),
+        ));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Ошибка сети'),
+      ));
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void _saveSelectedLanguage(String language) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selectedLanguage', language);
   }
 
   void _filterLanguages(String query) {
@@ -38,34 +82,42 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Выбранный язык'),
-          content: Container(
-            width: double.maxFinite,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search language',
-                  ),
-                  onChanged: _filterLanguages,
-                ),
-                Expanded(
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: filteredLanguages
-                        .map((language) => ListTile(
-                      title: Text(language),
-                      onTap: () {
-                        _changeLanguage(language);
-                        Navigator.of(context).pop();
+          title: Text('Выберите язык'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                width: double.maxFinite,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search language',
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _filterLanguages(value);
+                        });
                       },
-                    ))
-                        .toList(),
-                  ),
+                    ),
+                    Expanded(
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: filteredLanguages
+                            .map((language) => ListTile(
+                          title: Text(language),
+                          onTap: () {
+                            _changeLanguage(language);
+                            Navigator.of(context).pop();
+                          },
+                        ))
+                            .toList(),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         );
       },
@@ -77,7 +129,8 @@ class _ProfilePageState extends State<ProfilePage> {
       selectedLanguage = language;
     });
 
-    // Показать экран загрузки
+    _saveSelectedLanguage(language);
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -95,12 +148,12 @@ class _ProfilePageState extends State<ProfilePage> {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': widget.email,
-          'password': widget.password, // Добавьте password в запрос
+          'password': widget.password,
           'language': language
         }),
       );
 
-      Navigator.of(context).pop(); // Закрыть экран загрузки
+      Navigator.of(context).pop();
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -112,7 +165,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ));
       }
     } catch (e) {
-      Navigator.of(context).pop(); // Закрыть экран загрузки
+      Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Ошибка сети'),
       ));
@@ -120,7 +173,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _logout() {
-    // Add your logout logic here
     Navigator.of(context).popUntil((route) => route.isFirst);
     Navigator.pushReplacementNamed(context, '/login');
   }
@@ -131,7 +183,9 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         title: Text('Профиль'),
       ),
-      body: Padding(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,7 +200,6 @@ class _ProfilePageState extends State<ProfilePage> {
               subtitle: Text(selectedLanguage),
               onTap: _showLanguagePicker,
             ),
-            Spacer(),
             TextButton(
               onPressed: _logout,
               child: Text(
