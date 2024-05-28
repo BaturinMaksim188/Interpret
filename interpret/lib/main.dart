@@ -3,7 +3,7 @@ import 'login_page.dart';
 import 'home_page.dart';
 import 'profile_page.dart';
 import 'confirmation_page.dart';
-import 'read_page.dart';
+import 'read_page.dart';  // Импортируйте read_page
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(
               builder: (context) => ProfilePage(
                 email: args['email']!,
+                password: args['password']!, // Передача password
               ),
             );
           case '/read':

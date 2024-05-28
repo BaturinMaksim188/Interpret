@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'add_book_page.dart';
-import 'read_page.dart';  // Импортируйте read_page
+import 'read_page.dart';
 
 const String apiUrl = "https://interpret-208a65c05ca5.herokuapp.com";
 
@@ -170,7 +170,7 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ProfilePage(email: widget.email)),
+                MaterialPageRoute(builder: (context) => ProfilePage(email: widget.email, password: widget.password)),
               );
             },
           ),
