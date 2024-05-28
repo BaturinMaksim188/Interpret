@@ -23,6 +23,7 @@ class _ReadPageState extends State<ReadPage> {
   bool _isLoading = true;
   String _message = '';
   TextEditingController _jumpPageController = TextEditingController();
+  OverlayEntry? _overlayEntry;
 
   @override
   void initState() {
@@ -35,6 +36,7 @@ class _ReadPageState extends State<ReadPage> {
   void dispose() {
     _pageController.dispose();
     _jumpPageController.dispose();
+    _overlayEntry?.remove();
     super.dispose();
   }
 
@@ -150,7 +152,7 @@ class _ReadPageState extends State<ReadPage> {
                 if (page < 1) page = 1;
                 if (page > _bookPages.length) page = _bookPages.length;
                 Navigator.of(context).pop();
-                _goToPage(page - 1);
+                _goToPage(page - 1);  // Переход на страницу (0-индексация)
               } else {
                 Navigator.of(context).pop();
               }
@@ -167,6 +169,67 @@ class _ReadPageState extends State<ReadPage> {
       _currentPage = page;
     });
     _saveCurrentPage(page);
+  }
+
+  void _showTranslationOverlay(BuildContext context, String sentence, Offset position) {
+    if (_overlayEntry != null) {
+      _overlayEntry?.remove();
+      _overlayEntry = null;
+    }
+
+    _overlayEntry = _createOverlayEntry(context, sentence, position);
+    Overlay.of(context)?.insert(_overlayEntry!);
+  }
+
+  OverlayEntry _createOverlayEntry(BuildContext context, String sentence, Offset position) {
+    return OverlayEntry(
+      builder: (context) => GestureDetector(
+        onTap: () {
+          _overlayEntry?.remove();
+          _overlayEntry = null;
+        },
+        child: Stack(
+          children: [
+            Positioned(
+              left: position.dx,
+              top: position.dy,
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Перевод: test', // Здесь будет перевод предложения
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.close),
+                        onPressed: () {
+                          _overlayEntry?.remove();
+                          _overlayEntry = null;
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -189,11 +252,21 @@ class _ReadPageState extends State<ReadPage> {
         },
         itemCount: _bookPages.length,
         itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SingleChildScrollView(
-              child: Text(_bookPages[index]),
-            ),
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              return GestureDetector(
+                onTapUp: (details) {
+                  Offset position = details.globalPosition;
+                  _showTranslationOverlay(context, _bookPages[index], position);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SingleChildScrollView(
+                    child: Text(_bookPages[index]),
+                  ),
+                ),
+              );
+            },
           );
         },
       ),
