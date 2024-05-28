@@ -17,6 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   final _confirmPasswordController = TextEditingController();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _isLoading = false;
 
   void _toggleForm() {
     setState(() {
@@ -25,8 +26,19 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _submit() {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
     final isValid = _formKey.currentState!.validate();
-    if (!isValid) return;
+    if (!isValid) {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
 
     final email = _emailController.text.toLowerCase();
     final password = _passwordController.text;
@@ -34,6 +46,9 @@ class _LoginPageState extends State<LoginPage> {
 
     if (isLogin) {
       login(email, password).then((result) {
+        setState(() {
+          _isLoading = false;
+        });
         if (result['success']) {
           _saveLoginStatus(email, password);
           Navigator.of(context).pushReplacementNamed('/home', arguments: {
@@ -46,6 +61,9 @@ class _LoginPageState extends State<LoginPage> {
       });
     } else {
       if (password != confirmPassword) {
+        setState(() {
+          _isLoading = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("Пароли не совпадают"),
           backgroundColor: Colors.red,
@@ -53,6 +71,9 @@ class _LoginPageState extends State<LoginPage> {
         return;
       }
       register(email, password).then((result) {
+        setState(() {
+          _isLoading = false;
+        });
         if (result['success']) {
           _saveRegistrationDetails(email, password);
           Navigator.push(
@@ -102,7 +123,9 @@ class _LoginPageState extends State<LoginPage> {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Form(
+          child: _isLoading
+              ? CircularProgressIndicator()
+              : Form(
             key: _formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -148,8 +171,10 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: _submit,
-                  child: Text(isLogin ? 'Войти' : 'Зарегистрироваться'),
+                  onPressed: _isLoading ? null : _submit,
+                  child: _isLoading
+                      ? CircularProgressIndicator()
+                      : Text(isLogin ? 'Войти' : 'Зарегистрироваться'),
                 ),
               ],
             ),
