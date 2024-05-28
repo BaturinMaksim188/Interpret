@@ -22,6 +22,7 @@ class _ReadPageState extends State<ReadPage> {
   List<String> _bookPages = [];
   bool _isLoading = true;
   String _message = '';
+  TextEditingController _jumpPageController = TextEditingController();
 
   @override
   void initState() {
@@ -33,6 +34,7 @@ class _ReadPageState extends State<ReadPage> {
   @override
   void dispose() {
     _pageController.dispose();
+    _jumpPageController.dispose();
     super.dispose();
   }
 
@@ -120,6 +122,53 @@ class _ReadPageState extends State<ReadPage> {
     return pages;
   }
 
+  Future<void> _jumpToPage() async {
+    _jumpPageController.clear();
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Введите номер страницы"),
+        content: TextField(
+          controller: _jumpPageController,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            hintText: "Номер страницы",
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text("Отмена"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: Text("Перейти"),
+            onPressed: () {
+              int? page = int.tryParse(_jumpPageController.text);
+              if (page != null) {
+                if (page < 1) page = 1;
+                if (page > _bookPages.length) page = _bookPages.length;
+                Navigator.of(context).pop();
+                _goToPage(page - 1);
+              } else {
+                Navigator.of(context).pop();
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _goToPage(int page) {
+    _pageController.jumpToPage(page);
+    setState(() {
+      _currentPage = page;
+    });
+    _saveCurrentPage(page);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -165,7 +214,10 @@ class _ReadPageState extends State<ReadPage> {
                 }
                     : null,
               ),
-              Text('Страница ${_currentPage + 1} из ${_bookPages.length}'),
+              GestureDetector(
+                onTap: _jumpToPage,
+                child: Text('Страница ${_currentPage + 1} из ${_bookPages.length}'),
+              ),
               IconButton(
                 icon: Icon(Icons.arrow_forward),
                 onPressed: _currentPage < _bookPages.length - 1
