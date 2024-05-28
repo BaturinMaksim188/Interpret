@@ -119,7 +119,15 @@ class _ReadPageState extends State<ReadPage> {
       if (endIndex > content.length) {
         endIndex = content.length;
       }
-      pages.add(content.substring(startIndex, endIndex));
+      if (content[endIndex - 1] == '.') {
+        pages.add(content.substring(startIndex, endIndex));
+      } else {
+        int lastIndex = content.lastIndexOf('.', endIndex);
+        if (lastIndex > startIndex) {
+          endIndex = lastIndex + 1;
+        }
+        pages.add(content.substring(startIndex, endIndex));
+      }
       startIndex = endIndex;
     }
 
@@ -188,8 +196,25 @@ class _ReadPageState extends State<ReadPage> {
   }
 
   OverlayEntry _createOverlayEntry(BuildContext context, String sentence, Offset position) {
+    RenderBox renderBox = context.findRenderObject() as RenderBox;
+    Size size = renderBox.size;
+    double dx = position.dx;
+    double dy = position.dy;
+
+    const double overlayWidth = 220;
+    const double overlayHeight = 120;
+
+    if (dx + overlayWidth > size.width) {
+      dx = size.width - overlayWidth - 10;
+    }
+
+    if (dy + overlayHeight > size.height) {
+      dy = size.height - overlayHeight - 10;
+    }
+
     return OverlayEntry(
       builder: (context) => GestureDetector(
+        behavior: HitTestBehavior.translucent,
         onTap: () {
           _overlayEntry?.remove();
           _overlayEntry = null;
@@ -200,40 +225,47 @@ class _ReadPageState extends State<ReadPage> {
         child: Stack(
           children: [
             Positioned(
-              left: position.dx,
-              top: position.dy,
-              child: Material(
-                color: Colors.transparent,
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 10,
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Перевод: $sentence', // Отображение текста предложения
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.close),
-                        onPressed: () {
-                          _overlayEntry?.remove();
-                          _overlayEntry = null;
-                          setState(() {
-                            _highlightedSentence = null;
-                          });
-                        },
-                      ),
-                    ],
+              left: dx,
+              top: dy,
+              child: GestureDetector(
+                onTap: () {}, // Prevent closing when clicking inside the overlay
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    width: overlayWidth,
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 10,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Перевод: $sentence',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: IconButton(
+                            icon: Icon(Icons.close),
+                            onPressed: () {
+                              _overlayEntry?.remove();
+                              _overlayEntry = null;
+                              setState(() {
+                                _highlightedSentence = null;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -251,8 +283,9 @@ class _ReadPageState extends State<ReadPage> {
     for (String sentence in sentences) {
       spans.add(
         TextSpan(
-          text: sentence + '. ',
+          text: sentence + (sentence.endsWith('.') ? ' ' : '. '),
           style: TextStyle(
+            fontSize: 18, // Вернем стандартный размер текста
             backgroundColor: _highlightedSentence == sentence ? Colors.yellow : Colors.transparent,
           ),
           recognizer: TapGestureRecognizer()
