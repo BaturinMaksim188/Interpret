@@ -17,7 +17,28 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   String selectedLanguage = 'Russian';
-  List<String> languages = ['English', 'Spanish', 'French', 'German'];
+  List<String> languages = [
+    'English',
+    'Spanish',
+    'French',
+    'German',
+    'Chinese (Simplified)',
+    'Japanese',
+    'Korean',
+    'Russian',
+    'Portuguese',
+    'Italian',
+    'Dutch',
+    'Arabic',
+    'Turkish',
+    'Polish',
+    'Swedish',
+    'Danish',
+    'Norwegian',
+    'Finnish',
+    'Greek',
+    'Czech'
+  ];
   List<String> filteredLanguages = [];
   bool isLoading = true;
 
