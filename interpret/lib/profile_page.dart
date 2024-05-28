@@ -92,7 +92,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: <Widget>[
                     TextField(
                       decoration: InputDecoration(
-                        hintText: 'Search language',
+                        hintText: 'Найти',
                       ),
                       onChanged: (value) {
                         setState(() {
