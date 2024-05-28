@@ -65,8 +65,17 @@ class _ConfirmationPageState extends State<ConfirmationPage> {
         );
 
         if (response.statusCode == 200) {
-          _saveLoginStatus();
-          Navigator.of(context).pushReplacementNamed('/home');
+          await _saveLoginStatus();
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          String? password = prefs.getString('password');
+          if (password != null) {
+            Navigator.of(context).pushReplacementNamed('/home', arguments: {
+              'email': widget.email,
+              'password': password,
+            });
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Ошибка: пароль не найден')));
+          }
         } else {
           final responseJson = jsonDecode(utf8.decode(response.bodyBytes));
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(responseJson['message'].toString())));

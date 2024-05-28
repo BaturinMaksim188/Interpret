@@ -54,6 +54,7 @@ class _LoginPageState extends State<LoginPage> {
       }
       register(email, password).then((result) {
         if (result['success']) {
+          _saveRegistrationDetails(email, password);
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -70,6 +71,12 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _saveLoginStatus(String email, String password) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('isLoggedIn', true);
+    prefs.setString('email', email);
+    prefs.setString('password', password);
+  }
+
+  Future<void> _saveRegistrationDetails(String email, String password) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('email', email);
     prefs.setString('password', password);
   }

@@ -26,13 +26,17 @@ class MyApp extends StatelessWidget {
           case '/login':
             return MaterialPageRoute(builder: (context) => LoginPage());
           case '/home':
-            final args = settings.arguments as Map<String, String>;
-            return MaterialPageRoute(
-              builder: (context) => HomePage(
-                email: args['email']!,
-                password: args['password']!,
-              ),
-            );
+            final args = settings.arguments as Map<String, String?>;
+            if (args['email'] != null && args['password'] != null) {
+              return MaterialPageRoute(
+                builder: (context) => HomePage(
+                  email: args['email']!,
+                  password: args['password']!,
+                ),
+              );
+            } else {
+              return MaterialPageRoute(builder: (context) => LoginPage());
+            }
           case '/read':
             final args = settings.arguments as Map<String, String>;
             return MaterialPageRoute(
