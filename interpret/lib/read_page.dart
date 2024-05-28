@@ -90,7 +90,7 @@ class _ReadPageState extends State<ReadPage> {
       if (response.statusCode == 200) {
         var data = jsonDecode(utf8.decode(response.bodyBytes));
         setState(() {
-          _bookPages = paginateContent(data['content'], 1000);  // Разбить текст на страницы по 1000 символов
+          _bookPages = paginateContent(data['content'], 1000);
           _currentPage = data['current_page'];
           _pageController = PageController(initialPage: _currentPage);
           _isLoading = false;
@@ -162,7 +162,7 @@ class _ReadPageState extends State<ReadPage> {
                 if (page < 1) page = 1;
                 if (page > _bookPages.length) page = _bookPages.length;
                 Navigator.of(context).pop();
-                _goToPage(page - 1);  // Переход на страницу (0-индексация)
+                _goToPage(page - 1);
               } else {
                 Navigator.of(context).pop();
               }
@@ -228,7 +228,7 @@ class _ReadPageState extends State<ReadPage> {
               left: dx,
               top: dy,
               child: GestureDetector(
-                onTap: () {}, // Prevent closing when clicking inside the overlay
+                onTap: () {},
                 child: Material(
                   color: Colors.transparent,
                   child: Container(
@@ -248,7 +248,7 @@ class _ReadPageState extends State<ReadPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          'Перевод: $sentence',
+                          '$sentence',
                           style: TextStyle(fontSize: 16),
                         ),
                         Align(
@@ -278,14 +278,16 @@ class _ReadPageState extends State<ReadPage> {
 
   List<TextSpan> _buildTextSpans(String text) {
     List<TextSpan> spans = [];
-    List<String> sentences = text.split('. ');
+    RegExp sentenceRegex = RegExp(r'([^.!?]*[.!?])');
+    Iterable<RegExpMatch> matches = sentenceRegex.allMatches(text);
 
-    for (String sentence in sentences) {
+    for (RegExpMatch match in matches) {
+      String sentence = match.group(0)!;
       spans.add(
         TextSpan(
-          text: sentence + (sentence.endsWith('.') ? ' ' : '. '),
+          text: sentence,
           style: TextStyle(
-            fontSize: 18, // Вернем стандартный размер текста
+            fontSize: 18,
             backgroundColor: _highlightedSentence == sentence ? Colors.yellow : Colors.transparent,
           ),
           recognizer: TapGestureRecognizer()
