@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'profile_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -165,9 +166,12 @@ class _HomePageState extends State<HomePage> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: Icon(Icons.exit_to_app),
+            icon: Icon(Icons.account_circle),
             onPressed: () {
-              _logout(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfilePage(email: widget.email)),
+              );
             },
           ),
         ],

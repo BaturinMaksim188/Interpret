@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart';
-import 'confirmation_page.dart';
 import 'home_page.dart';
-import 'read_page.dart';  // Импортируйте read_page
+import 'profile_page.dart';
+import 'confirmation_page.dart';
+import 'read_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -26,17 +27,20 @@ class MyApp extends StatelessWidget {
           case '/login':
             return MaterialPageRoute(builder: (context) => LoginPage());
           case '/home':
-            final args = settings.arguments as Map<String, String?>;
-            if (args['email'] != null && args['password'] != null) {
-              return MaterialPageRoute(
-                builder: (context) => HomePage(
-                  email: args['email']!,
-                  password: args['password']!,
-                ),
-              );
-            } else {
-              return MaterialPageRoute(builder: (context) => LoginPage());
-            }
+            final args = settings.arguments as Map<String, String>;
+            return MaterialPageRoute(
+              builder: (context) => HomePage(
+                email: args['email']!,
+                password: args['password']!,
+              ),
+            );
+          case '/profile':
+            final args = settings.arguments as Map<String, String>;
+            return MaterialPageRoute(
+              builder: (context) => ProfilePage(
+                email: args['email']!,
+              ),
+            );
           case '/read':
             final args = settings.arguments as Map<String, String>;
             return MaterialPageRoute(
